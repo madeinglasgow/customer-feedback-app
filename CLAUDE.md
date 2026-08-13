@@ -145,17 +145,149 @@ five tools (semantic / symbol / regex / sparse / hybrid) consume `path`,
 URL → this repo (path `feedback_app`), cell 8 collection_name →
 `feedback_app_collection`, repo_path → `./feedback_app`.
 
+## Database query tool for the lab (status: drafted + live-tested, 2026-08-13)
+
+The lab notebook (C1_M2_Lab_3) got a sixth tool: read-only SQL against the
+seeded SQLite DB. The **seeded snapshot is committed at
+`instance/feedback.db`** (gitignore exception) so a fresh clone carries the
+data — regenerate with the seed scripts after any seed change and re-commit.
+Without this tool, single-hop query #5 is unanswerable and multi-hop 1–4
+degrade to weaker paths (reading `scripts/seed_data.py` chunks as fixtures).
+
+### Final tool code (paste as a notebook cell; matches tool_utils.Tool)
+
+Incorporates both fixes learned from live testing (see "Lessons" below):
+the no-rows nudge and the value-vocabulary description.
+
+```python
+import sqlite3
+
+class DatabaseQueryInput(BaseModel):
+    sql: str = Field(description="A single read-only SQL SELECT statement to run against the application's SQLite database")
+
+class DatabaseQueryOutput(BaseModel):
+    results: str
+
+class DatabaseQuery(tool_utils.Tool):
+    """A tool for querying the application's live data with read-only SQL."""
+
+    def __init__(self, db_path, include_reason=False):
+        super().__init__(
+            name="run_database_query",
+            description=(
+                "Run a read-only SQL SELECT against the application's live SQLite database "
+                "(tables: feedback, escalations, notifications; up to 50 rows returned). "
+                "Key columns hold lowercase string values: feedback.urgency is one of "
+                "low/normal/high/critical; feedback.status is one of new/reviewing/resolved; "
+                "notifications.status is one of pending/sent/suppressed/failed. "
+                "Inspect the full schema with: SELECT sql FROM sqlite_master. "
+                "Best for questions about actual records: counts, statuses, specific customers, "
+                "which items were escalated or notified."
+            ),
+            input_model=DatabaseQueryInput,
+            output_model=DatabaseQueryOutput,
+            include_reason=include_reason,
+        )
+        self.db_uri = f"file:{db_path}?mode=ro"
+
+    def __call__(self, model_args):
+        try:
+            args = self.input_model.model_validate_json(model_args)
+            conn = sqlite3.connect(self.db_uri, uri=True)
+            try:
+                cursor = conn.execute(args.sql)
+                columns = [d[0] for d in cursor.description] if cursor.description else []
+                rows = cursor.fetchmany(50)
+            finally:
+                conn.close()
+            if not rows:
+                return DatabaseQueryOutput(results=(
+                    "Query returned no rows. If this is unexpected, your filter values may not "
+                    "match the data — check actual values with SELECT DISTINCT <column> FROM <table> "
+                    "before concluding that no matching records exist."
+                ))
+            lines = [" | ".join(columns)]
+            lines += [" | ".join(str(v) for v in row) for row in rows]
+            return DatabaseQueryOutput(results="\n".join(lines))
+        except Exception as e:
+            return self.ToolError(message=f"Database query failed: {e}")
+
+db_tool = DatabaseQuery("feedback_app/instance/feedback.db", include_reason=True)
+```
+
+### Wiring
+
+1. Re-clone so the clone contains `instance/feedback.db`
+   (`shutil.rmtree("feedback_app")` then re-run the clone cell).
+2. Add `db_tool` to the `tools=[...]` list in both `Agent(...)` cells.
+3. System-prompt rule: *"Search tools only see source code and
+   documentation — they cannot answer questions about actual data. For
+   questions about specific records, counts, current statuses, or whether
+   something happened for a particular customer, use run_database_query.
+   Discover the schema first if you're unsure of column names."*
+4. Optional extra rule: *"An empty query result may mean your assumptions
+   about the data are wrong, not that no records exist. Verify column
+   values with SELECT DISTINCT before concluding absence."*
+
+Smoke test (expect Dana Whitfield / Elena Vasquez / Ravi Menon):
+
+```python
+print(db_tool('{"sql": "SELECT customer_name, status FROM feedback WHERE urgency=\'critical\' AND status != \'resolved\'", "reason": "test"}').results)
+```
+
+### Lessons from the live gpt-4.1-mini run (keep the failing trace!)
+
+First live run of *"Which customers currently have critical feedback that
+hasn't been resolved?"* FAILED informatively — the model answered "none"
+(wrong: 3 exist). What happened:
+
+- **SQL competence was fine**: it recovered from a bad column guess,
+  fetched the schema via `sqlite_master`, wrote a correct LEFT JOIN.
+- **Domain semantics failed**: it filtered `status='critical'` — but
+  criticality lives in `urgency`; `status` holds new/reviewing/resolved.
+  DDL shows only VARCHAR; nothing conveys value vocabularies.
+- **Empty-result trap**: it treated 0 rows as confirmation of absence
+  instead of a signal its filter was wrong.
+
+Fixes applied in the code above: (1) the no-rows message carries the
+SELECT DISTINCT recovery hint — instructions arriving as tool output at
+the moment of failure are highly effective; (2) enum vocabularies moved
+into the tool description. The failing-vs-fixed trace pair is a
+first-class teaching exhibit: schema ≠ semantics; empty result ≠ absence;
+tool descriptions and tool outputs are engineerable context.
+
+### Other lab-tuning findings from live testing (same session)
+
+- Prose outranks code for NL queries under MiniLM embeddings whenever
+  prose coverage exists (docs/CHANGELOG/tests). Correct behavior — makes
+  doc→code chaining the lesson. For code-first demos use mechanisms with
+  zero prose coverage (e.g. rule tie-breaking, engine.py docstring only).
+- gpt-4.1-mini failure modes observed: natural-language sparse probes
+  ($contains is case-sensitive exact substring → empty results → retries)
+  and guessed symbol names (`decide_escalation` instead of copying
+  `should_escalate` from results). Prompt rules that fix both: sparse =
+  exact identifiers copied from results only; after a result names a
+  class/function, run_symbol_search with that exact name.
+- Safety-question agent run reached the right code but mis-cited the
+  escalation path (credited `_escalate_default_high`'s safety clause;
+  actual path is the CRITICAL always-escalate branch — the HIGH
+  per-category checks are never reached for critical items). Good grading
+  discriminator between surface and deep investigation.
+- Stale canned queries (cells 56/61/75) target the old lucasrct/app;
+  replacements suggested: safety-rule question (semantic→symbol chain),
+  NOTIFICATION_MIN_URGENCY question (hybrid showcase), escalation-with-
+  no-notification (multi-hop, good token-analysis subject), plus one
+  native absence-proof ("where does the app retry failed notifications?"
+  — it doesn't; correct answer must say so).
+
 ## TODO for the lab
 
-- **Add the read-only DB query tool to the notebook.** A `DatabaseQuery`
-  tool matching the lab's `tool_utils.Tool` pattern has been drafted
-  (2026-08): read-only URI (`file:...?mode=ro`), 50-row cap, schema
-  discoverable via `sqlite_master`. To support it, the **seeded database
-  snapshot is now committed at `instance/feedback.db`** (gitignore
-  exception) so a fresh clone carries the data — regenerate it with the
-  seed scripts after any seed change and re-commit. Without this tool,
-  single-hop query #5 is unanswerable and multi-hop 1–4 degrade to
-  weaker paths (reading `scripts/seed_data.py` chunks as fixtures).
+- Apply the DatabaseQuery cell above (with both fixes) on the platform and
+  re-run the critical-unresolved query; expect a 2–3 call trace.
+- Add the two search-strategy prompt rules (sparse/symbol) and
+  `n_results=5` in test cells; replace stale canned queries.
+- Consider a chunk_type filter on SemanticSearch (code-only vs docs-only
+  scoping) — candidate student exercise.
 - The repo's own `ingestion/` pipeline (OpenAI-embedding collection at
   `./chroma_data`) remains for a lucasrct/app-style web-app collection;
   rebuild with the OpenAI provider if used — the checked verification
