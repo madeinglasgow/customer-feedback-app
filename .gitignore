@@ -1,7 +1,9 @@
 __pycache__/
 *.pyc
 .venv/
-instance/
+# Keep the seeded database snapshot; ignore anything else SQLite writes here
+instance/*
+!instance/feedback.db
 .env
 .pytest_cache/
 chroma_data/

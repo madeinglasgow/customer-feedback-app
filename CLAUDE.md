@@ -147,13 +147,15 @@ URL → this repo (path `feedback_app`), cell 8 collection_name →
 
 ## TODO for the lab
 
-- **Build a read-only DB query tool.** The lab has no database tool (its
-  five tools are all Chroma-based; no filesystem/log access either).
-  Single-hop #5 is unanswerable without it; multi-hop 1–4 degrade to
+- **Add the read-only DB query tool to the notebook.** A `DatabaseQuery`
+  tool matching the lab's `tool_utils.Tool` pattern has been drafted
+  (2026-08): read-only URI (`file:...?mode=ro`), 50-row cap, schema
+  discoverable via `sqlite_master`. To support it, the **seeded database
+  snapshot is now committed at `instance/feedback.db`** (gitignore
+  exception) so a fresh clone carries the data — regenerate it with the
+  seed scripts after any seed change and re-commit. Without this tool,
+  single-hop query #5 is unanswerable and multi-hop 1–4 degrade to
   weaker paths (reading `scripts/seed_data.py` chunks as fixtures).
-  Suggested shape: accept a SQL string, execute against
-  `sqlite3.connect("file:instance/feedback.db?mode=ro", uri=True)`, return
-  rows. (If the lab agent gets a bash tool, the `sqlite3` CLI suffices.)
 - The repo's own `ingestion/` pipeline (OpenAI-embedding collection at
   `./chroma_data`) remains for a lucasrct/app-style web-app collection;
   rebuild with the OpenAI provider if used — the checked verification
