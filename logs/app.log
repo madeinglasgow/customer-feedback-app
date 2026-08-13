@@ -1,0 +1,129 @@
+2026-08-13 16:20:02,098 INFO feedback.triage priority assessed: level=high rule=repeated_billing_failure category=billing
+2026-08-13 16:20:02,100 INFO feedback.intake feedback received: id=1 category=billing urgency=high email=tomas.lindqvist@example.com
+2026-08-13 16:20:02,101 INFO feedback.intake escalation created: id=1 feedback_id=1 reason=repeated_billing_failure: message indicates repetition ('charged twice')
+2026-08-13 16:20:02,101 WARNING feedback.notifications notification suppressed: urgency high below immediate-attention threshold critical (escalation_id=1 feedback_id=1)
+2026-08-13 16:20:02,107 INFO feedback.workflow feedback status changed: id=1 status=reviewing
+2026-08-13 16:20:02,109 INFO feedback.triage priority assessed: level=high rule=churn_threat category=customer_service
+2026-08-13 16:20:02,110 INFO feedback.intake feedback received: id=2 category=customer_service urgency=high email=aisha.rahman@example.com
+2026-08-13 16:20:02,110 INFO feedback.intake escalation created: id=2 feedback_id=2 reason=churn_threat: customer threatening to leave ('done with this company')
+2026-08-13 16:20:02,110 WARNING feedback.notifications notification suppressed: notifications disabled (escalation_id=2 feedback_id=2)
+2026-08-13 16:20:02,112 INFO feedback.workflow feedback status changed: id=2 status=reviewing
+2026-08-13 16:20:02,113 INFO feedback.triage priority assessed: level=normal rule=category_baseline category=product
+2026-08-13 16:20:02,113 INFO feedback.intake feedback received: id=3 category=product urgency=normal email=lena.fischer@example.com
+2026-08-13 16:20:02,115 INFO feedback.workflow feedback resolved: id=3
+2026-08-13 16:20:02,118 INFO feedback.triage priority assessed: level=normal rule=category_baseline category=billing
+2026-08-13 16:20:02,118 INFO feedback.intake feedback received: id=4 category=billing urgency=normal email=fatima.zahra@example.com
+2026-08-13 16:20:02,120 INFO feedback.workflow feedback resolved: id=4
+2026-08-13 16:20:02,121 INFO feedback.triage priority assessed: level=low rule=category_baseline category=other
+2026-08-13 16:20:02,121 INFO feedback.intake feedback received: id=5 category=other urgency=low email=george.adebayo@example.com
+2026-08-13 16:20:02,123 INFO feedback.workflow feedback resolved: id=5
+2026-08-13 16:20:02,124 INFO feedback.triage priority assessed: level=normal rule=category_baseline category=product
+2026-08-13 16:20:02,124 INFO feedback.intake feedback received: id=6 category=product urgency=normal email=ethan.caldwell@example.com
+2026-08-13 16:20:02,126 INFO feedback.workflow feedback resolved: id=6
+2026-08-13 16:20:02,127 INFO feedback.triage priority assessed: level=normal rule=category_baseline category=customer_service
+2026-08-13 16:20:02,127 INFO feedback.intake feedback received: id=7 category=customer_service urgency=normal email=oscar.vega@example.com
+2026-08-13 16:20:02,129 INFO feedback.workflow feedback resolved: id=7
+2026-08-13 16:20:02,130 INFO feedback.triage priority assessed: level=normal rule=category_baseline category=billing
+2026-08-13 16:20:02,131 INFO feedback.intake feedback received: id=8 category=billing urgency=normal email=marcus.bell@example.com
+2026-08-13 16:20:02,132 INFO feedback.workflow feedback resolved: id=8
+2026-08-13 16:20:02,133 INFO feedback.triage priority assessed: level=normal rule=category_baseline category=shipping
+2026-08-13 16:20:02,134 INFO feedback.intake feedback received: id=9 category=shipping urgency=normal email=ben.whitaker@example.com
+2026-08-13 16:20:02,135 INFO feedback.workflow feedback resolved: id=9
+2026-08-13 16:20:02,137 INFO feedback.triage priority assessed: level=low rule=compliment category=returns
+2026-08-13 16:20:02,137 INFO feedback.intake feedback received: id=10 category=returns urgency=low email=ingrid.olsen@example.com
+2026-08-13 16:20:02,138 INFO feedback.workflow feedback resolved: id=10
+2026-08-13 16:20:02,140 INFO feedback.triage priority assessed: level=low rule=compliment category=shipping
+2026-08-13 16:20:02,140 INFO feedback.intake feedback received: id=11 category=shipping urgency=low email=amara.diallo@example.com
+2026-08-13 16:20:02,141 INFO feedback.workflow feedback resolved: id=11
+2026-08-13 16:20:02,143 INFO feedback.triage priority assessed: level=normal rule=category_baseline category=product
+2026-08-13 16:20:02,143 INFO feedback.intake feedback received: id=12 category=product urgency=normal email=noah.petersen@example.com
+2026-08-13 16:20:02,145 INFO feedback.triage priority assessed: level=normal rule=category_baseline category=customer_service
+2026-08-13 16:20:02,145 INFO feedback.intake feedback received: id=13 category=customer_service urgency=normal email=dmitri.ivanov@example.com
+2026-08-13 16:20:02,146 INFO feedback.workflow feedback status changed: id=13 status=reviewing
+2026-08-13 16:20:02,148 INFO feedback.triage priority assessed: level=normal rule=category_baseline category=billing
+2026-08-13 16:20:02,149 INFO feedback.intake feedback received: id=14 category=billing urgency=normal email=olivia.grant@example.com
+2026-08-13 16:20:02,150 INFO feedback.workflow feedback resolved: id=14
+2026-08-13 16:20:02,151 INFO feedback.triage priority assessed: level=normal rule=category_baseline category=shipping
+2026-08-13 16:20:02,152 INFO feedback.intake feedback received: id=15 category=shipping urgency=normal email=sofia.marino@example.com
+2026-08-13 16:20:02,153 INFO feedback.workflow feedback resolved: id=15
+2026-08-13 16:20:02,154 INFO feedback.triage priority assessed: level=low rule=compliment category=other
+2026-08-13 16:20:02,155 INFO feedback.intake feedback received: id=16 category=other urgency=low email=julia.kim@example.com
+2026-08-13 16:20:02,156 INFO feedback.workflow feedback resolved: id=16
+2026-08-13 16:20:02,157 INFO feedback.triage priority assessed: level=normal rule=category_baseline category=returns
+2026-08-13 16:20:02,158 INFO feedback.intake feedback received: id=17 category=returns urgency=normal email=chloe.bennett@example.com
+2026-08-13 16:20:02,159 INFO feedback.workflow feedback status changed: id=17 status=reviewing
+2026-08-13 16:20:02,161 INFO feedback.triage priority assessed: level=normal rule=category_baseline category=billing
+2026-08-13 16:20:02,161 INFO feedback.intake feedback received: id=18 category=billing urgency=normal email=marcus.bell@example.com
+2026-08-13 16:20:02,162 INFO feedback.workflow feedback resolved: id=18
+2026-08-13 16:20:02,164 INFO feedback.triage priority assessed: level=low rule=compliment category=customer_service
+2026-08-13 16:20:02,164 INFO feedback.intake feedback received: id=19 category=customer_service urgency=low email=liam.murphy@example.com
+2026-08-13 16:20:02,165 INFO feedback.workflow feedback resolved: id=19
+2026-08-13 16:20:02,167 INFO feedback.triage priority assessed: level=low rule=compliment category=product
+2026-08-13 16:20:02,167 INFO feedback.intake feedback received: id=20 category=product urgency=low email=grace.liu@example.com
+2026-08-13 16:20:02,168 INFO feedback.workflow feedback resolved: id=20
+2026-08-13 16:20:02,170 INFO feedback.triage priority assessed: level=normal rule=category_baseline category=shipping
+2026-08-13 16:20:02,170 INFO feedback.intake feedback received: id=21 category=shipping urgency=normal email=igor.novak@example.com
+2026-08-13 16:20:02,171 INFO feedback.workflow feedback status changed: id=21 status=reviewing
+2026-08-13 16:20:02,173 INFO feedback.triage priority assessed: level=low rule=category_baseline category=other
+2026-08-13 16:20:02,173 INFO feedback.intake feedback received: id=22 category=other urgency=low email=sara.lindgren@example.com
+2026-08-13 16:20:02,174 INFO feedback.workflow feedback status changed: id=22 status=reviewing
+2026-08-13 16:20:02,175 INFO feedback.triage priority assessed: level=high rule=churn_threat category=returns
+2026-08-13 16:20:02,176 INFO feedback.intake feedback received: id=23 category=returns urgency=high email=ryan.doyle@example.com
+2026-08-13 16:20:02,176 INFO feedback.intake escalation created: id=3 feedback_id=23 reason=churn_threat: customer threatening to leave ('cancel my account')
+2026-08-13 16:20:02,176 INFO feedback.notifications notification dispatched to team=cs-team-inbox (escalation_id=3 feedback_id=23)
+2026-08-13 16:20:02,179 INFO feedback.workflow escalation resolved: id=3 feedback_id=23
+2026-08-13 16:20:02,179 INFO feedback.workflow feedback resolved: id=23
+2026-08-13 16:20:02,182 INFO feedback.triage priority assessed: level=normal rule=category_baseline category=product
+2026-08-13 16:20:02,183 INFO feedback.intake feedback received: id=24 category=product urgency=normal email=mia.torres@example.com
+2026-08-13 16:20:02,184 INFO feedback.workflow feedback status changed: id=24 status=reviewing
+2026-08-13 16:20:02,185 INFO feedback.triage priority assessed: level=normal rule=category_baseline category=returns
+2026-08-13 16:20:02,186 INFO feedback.intake feedback received: id=25 category=returns urgency=normal email=wei.chen@example.com
+2026-08-13 16:20:02,187 INFO feedback.workflow feedback status changed: id=25 status=reviewing
+2026-08-13 16:20:02,189 INFO feedback.triage priority assessed: level=high rule=churn_threat category=shipping
+2026-08-13 16:20:02,189 INFO feedback.intake feedback received: id=26 category=shipping urgency=high email=priya.sharma@example.com
+2026-08-13 16:20:02,189 INFO feedback.escalation escalation skipped: feedback_id=26 category=shipping rule=churn_threat
+2026-08-13 16:20:02,191 INFO feedback.triage priority assessed: level=high rule=churn_threat category=shipping
+2026-08-13 16:20:02,191 INFO feedback.intake feedback received: id=27 category=shipping urgency=high email=jordan.okafor@example.com
+2026-08-13 16:20:02,192 INFO feedback.intake escalation created: id=4 feedback_id=27 reason=churn_threat: customer threatening to leave ('taking my business elsewhere')
+2026-08-13 16:20:02,192 INFO feedback.notifications notification dispatched to team=cs-team-inbox (escalation_id=4 feedback_id=27)
+2026-08-13 16:20:02,194 INFO feedback.workflow escalation resolved: id=4 feedback_id=27
+2026-08-13 16:20:02,194 INFO feedback.workflow feedback resolved: id=27
+2026-08-13 16:20:02,196 INFO feedback.triage priority assessed: level=low rule=category_baseline category=other
+2026-08-13 16:20:02,196 INFO feedback.intake feedback received: id=28 category=other urgency=low email=paula.reyes@example.com
+2026-08-13 16:20:02,198 INFO feedback.triage priority assessed: level=normal rule=category_baseline category=billing
+2026-08-13 16:20:02,199 INFO feedback.intake feedback received: id=29 category=billing urgency=normal email=ken.watanabe@example.com
+2026-08-13 16:20:02,201 INFO feedback.triage priority assessed: level=normal rule=category_baseline category=customer_service
+2026-08-13 16:20:02,201 INFO feedback.intake feedback received: id=30 category=customer_service urgency=normal email=nadia.haddad@example.com
+2026-08-13 16:20:02,203 INFO feedback.triage priority assessed: level=critical rule=safety_hazard category=product
+2026-08-13 16:20:02,203 INFO feedback.intake feedback received: id=31 category=product urgency=critical email=dana.whitfield@example.com
+2026-08-13 16:20:02,203 INFO feedback.intake escalation created: id=5 feedback_id=31 reason=safety_hazard: message mentions 'smoking'
+2026-08-13 16:20:02,203 INFO feedback.notifications notification dispatched to team=cs-team-inbox (escalation_id=5 feedback_id=31)
+2026-08-13 16:20:02,205 INFO feedback.workflow feedback status changed: id=31 status=reviewing
+2026-08-13 16:20:02,207 INFO feedback.triage priority assessed: level=normal rule=category_baseline category=returns
+2026-08-13 16:20:02,207 INFO feedback.intake feedback received: id=32 category=returns urgency=normal email=miguel.santos@example.com
+2026-08-13 16:20:02,209 INFO feedback.triage priority assessed: level=normal rule=category_baseline category=returns
+2026-08-13 16:20:02,209 INFO feedback.intake feedback received: id=33 category=returns urgency=normal email=tariq.aziz@example.com
+2026-08-13 16:20:02,211 INFO feedback.triage priority assessed: level=critical rule=suspected_fraud category=other
+2026-08-13 16:20:02,211 INFO feedback.intake feedback received: id=34 category=other urgency=critical email=ahmed.karimi@example.com
+2026-08-13 16:20:02,212 INFO feedback.intake escalation created: id=6 feedback_id=34 reason=suspected_fraud: unauthorized charge indicators ('scam')
+2026-08-13 16:20:02,212 INFO feedback.notifications notification dispatched to team=cs-team-inbox (escalation_id=6 feedback_id=34)
+2026-08-13 16:20:02,214 INFO feedback.workflow escalation resolved: id=6 feedback_id=34
+2026-08-13 16:20:02,214 INFO feedback.workflow feedback resolved: id=34
+2026-08-13 16:20:02,216 INFO feedback.triage priority assessed: level=normal rule=category_baseline category=shipping
+2026-08-13 16:20:02,216 INFO feedback.intake feedback received: id=35 category=shipping urgency=normal email=hana.suzuki@example.com
+2026-08-13 16:20:02,218 INFO feedback.triage priority assessed: level=normal rule=category_baseline category=customer_service
+2026-08-13 16:20:02,219 INFO feedback.intake feedback received: id=36 category=customer_service urgency=normal email=emily.stanton@example.com
+2026-08-13 16:20:02,221 INFO feedback.triage priority assessed: level=critical rule=suspected_fraud category=billing
+2026-08-13 16:20:02,221 INFO feedback.intake feedback received: id=37 category=billing urgency=critical email=elena.vasquez@example.com
+2026-08-13 16:20:02,222 INFO feedback.intake escalation created: id=7 feedback_id=37 reason=suspected_fraud: unauthorized charge indicators ('did not authorize')
+2026-08-13 16:20:02,222 INFO feedback.notifications notification dispatched to team=cs-team-inbox (escalation_id=7 feedback_id=37)
+2026-08-13 16:20:02,224 INFO feedback.triage priority assessed: level=low rule=category_baseline category=other
+2026-08-13 16:20:02,225 INFO feedback.intake feedback received: id=38 category=other urgency=low email=victor.moreau@example.com
+2026-08-13 16:20:02,226 INFO feedback.triage priority assessed: level=critical rule=safety_hazard category=product
+2026-08-13 16:20:02,227 INFO feedback.intake feedback received: id=39 category=product urgency=critical email=ravi.menon@example.com
+2026-08-13 16:20:02,227 INFO feedback.intake escalation created: id=8 feedback_id=39 reason=safety_hazard: message mentions 'burned'
+2026-08-13 16:20:02,227 INFO feedback.notifications notification dispatched to team=cs-team-inbox (escalation_id=8 feedback_id=39)
+2026-08-13 16:20:02,230 INFO feedback.triage priority assessed: level=high rule=repeated_billing_failure category=billing
+2026-08-13 16:20:02,231 INFO feedback.intake feedback received: id=40 category=billing urgency=high email=marcus.bell@example.com
+2026-08-13 16:20:02,231 INFO feedback.intake escalation created: id=9 feedback_id=40 reason=repeated_billing_failure: 2 recent billing complaints on file for this customer
+2026-08-13 16:20:02,231 INFO feedback.notifications notification dispatched to team=cs-team-inbox (escalation_id=9 feedback_id=40)
