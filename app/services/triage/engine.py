@@ -27,6 +27,7 @@ class TriageEngine:
 
     def assess(self, submission: FeedbackSubmission) -> PriorityAssessment:
         best: PriorityAssessment | None = None
+        fallback: PriorityAssessment | None = None
         for rule in self.rules:
             if not rule.applies_to(submission.category):
                 continue
@@ -37,11 +38,14 @@ class TriageEngine:
             )
             if assessment is None:
                 continue
-            if best is None or SEVERITY_ORDER[assessment.level] > SEVERITY_ORDER[best.level]:
+            if rule.is_fallback:
+                if fallback is None:
+                    fallback = assessment
+            elif best is None or SEVERITY_ORDER[assessment.level] > SEVERITY_ORDER[best.level]:
                 best = assessment
 
-        if best is None:  # cannot happen while CategoryBaselineRule is registered
-            best = PriorityAssessment(
+        if best is None:
+            best = fallback or PriorityAssessment(
                 level=UrgencyLevel.NORMAL, rule="fallback", rationale="no rule fired"
             )
 

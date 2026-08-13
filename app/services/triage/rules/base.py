@@ -30,6 +30,11 @@ class SeverityRule(ABC):
     #: Stable identifier recorded in assessment rationales and logs.
     name: str = "base"
 
+    #: Fallback rules only apply when no specific rule fired. This lets a
+    #: specific low-severity outcome (e.g. a compliment) take precedence over
+    #: a category's higher default.
+    is_fallback: bool = False
+
     def applies_to(self, category: FeedbackCategory) -> bool:
         """Whether this rule should run for feedback in the given category."""
         return True

@@ -16,10 +16,12 @@ CATEGORY_BASELINES = {
 class CategoryBaselineRule(SeverityRule):
     """Fallback rule providing each category's baseline severity.
 
-    Always fires, so the engine always has at least one assessment.
+    Always fires, but as a fallback it is only consulted when no specific
+    rule produced an assessment.
     """
 
     name = "category_baseline"
+    is_fallback = True
 
     def evaluate(self, message, category, order_id):
         level = CATEGORY_BASELINES.get(category, UrgencyLevel.NORMAL)
