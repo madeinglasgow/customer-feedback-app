@@ -49,6 +49,7 @@ class IngestionConfig:
     exclude_files: tuple = (
         "SPEC.md",
         "docs/investigation_scenarios.md",
+        "CLAUDE.md",
     )
     batch_size: int = 100
     tokenizer_model: str = "text-embedding-3-small"

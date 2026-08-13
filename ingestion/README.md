@@ -7,9 +7,9 @@ structure (chunking strategy, metadata schema, embedding setup).
 
 **This directory is course tooling, not part of the feedback application**,
 and it is excluded from its own ingestion — running the script never puts
-this pipeline's code into the collection. Also excluded: `SPEC.md` and
-`docs/investigation_scenarios.md` (spoilers), plus `.venv`, `instance/`,
-`logs/`, and `chroma_data/`.
+this pipeline's code into the collection. Also excluded: `SPEC.md`,
+`docs/investigation_scenarios.md`, and `CLAUDE.md` (spoilers), plus
+`.venv`, `instance/`, `logs/`, and `chroma_data/`.
 
 ## What gets ingested
 
