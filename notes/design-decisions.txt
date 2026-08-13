@@ -1,0 +1,64 @@
+Design decisions log
+====================
+
+Informal record of why things are built the way they are. Newest first.
+
+
+2026-07 — Urgency vocabulary drift
+----------------------------------
+Acknowledged rather than fixed: the triage package talks about "severity"
+and "priority", the database column is "urgency", and the notification
+service asks whether an item "requires immediate attention". These grew up
+at different times (triage was prototyped in a separate repo). Renaming
+everything to one word would churn every module for zero behavior change,
+so we documented the mapping in architecture.md and moved on.
+
+
+2026-06 — Word-boundary keyword matching
+----------------------------------------
+The original substring matcher flagged a five-star review containing
+"beautifully fired ceramic" as a fire hazard. Matching now requires word
+boundaries: "fire" matches "fire" and "caught fire" but not "fired".
+Phrases in the keyword lists are matched as whole phrases. The trade-off
+(missing genuine safety reports phrased in words we didn't list) is
+handled by keeping the term lists generous rather than by loosening the
+matcher.
+
+
+2026-05 — Billing history feeds triage
+--------------------------------------
+A single "payment failed" message reads as routine, but the third one in a
+month from the same customer is a pattern. The repeated-billing-failure
+rule therefore consults the database (count of the customer's recent
+billing complaints) in addition to the message text. This is the only rule
+that looks beyond the submission itself; keep it that way unless there is
+a strong reason — rules that hit the database are harder to reason about
+and test.
+
+
+2026-04 — Escalation is a separate decision from urgency
+--------------------------------------------------------
+Urgency answers "how serious is this?"; escalation answers "does the
+on-duty team need to see it now?". Conflating them meant every high item
+paged the team, including shipping complaints nobody could act on because
+the customer gave no order reference. The escalation policy owns per-
+category conditions; triage stays category-generic where possible.
+
+
+2026-04 — Notification outbox instead of direct send
+----------------------------------------------------
+We do not send email/Slack from the request path. The notification service
+writes rows to a notifications table (an outbox) and a delivery process
+owns actually sending them. Benefits: the intake path cannot be slowed or
+failed by a provider outage, suppressed alerts leave an auditable record,
+and tests don't need network mocks. Consequence to remember: "a
+notification exists" and "the team was alerted" are related but distinct
+facts — check the row's status.
+
+
+2026-04 — Baseline severities are fallbacks, not competitors
+------------------------------------------------------------
+First implementation let the per-category baseline compete with specific
+rules under a max-wins policy, which meant a compliment (low) could never
+beat the product baseline (normal). Baselines are now consulted only when
+no specific rule fires.

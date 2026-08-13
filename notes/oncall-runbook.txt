@@ -1,0 +1,69 @@
+On-call runbook — customer feedback app
+=======================================
+
+Working notes for the support-engineering rotation. Update as you learn.
+
+
+"The team says no alert arrived for an escalation"
+--------------------------------------------------
+Work the chain in order; stop at the first mismatch:
+
+1. Open the feedback record in the dashboard. Is there an escalation at
+   all? If not, this is an escalation-policy question, not a notification
+   question — check the item's category and urgency against the policy.
+2. If there is an escalation, look at its notification rows on the detail
+   page. A row with status "suppressed" carries an explanation in its
+   detail field — that is usually the whole answer.
+3. If there are NO notification rows at all for the escalation, the master
+   notifications switch was almost certainly off when the escalation was
+   created. That leaves no database trace by design — check the
+   application log around the escalation's timestamp, and check what the
+   notification configuration was at the time.
+4. Confirm the recipient team id in the active configuration matches the
+   inbox the team actually watches.
+
+History worth knowing: during the June alert-volume review the immediate-
+alert urgency bar was temporarily raised (see CHANGELOG 1.3.x), and the
+alert channel is switched off entirely during maintenance windows. Both
+have produced "where was my alert?" tickets after the fact.
+
+
+Maintenance windows
+-------------------
+Procedure: set NOTIFICATIONS_ENABLED=false and restart; intake keeps
+running and customers are unaffected. Escalations created during the
+window do NOT page anyone and leave no outbox row — sweep the dashboard
+for unresolved escalations at the end of the window before re-enabling.
+Forgetting the sweep is the classic failure mode; it has happened.
+
+
+Log crib sheet
+--------------
+Logs go to logs/app.log (and stdout). One line per decision:
+
+  feedback received          intake accepted a submission
+  priority assessed          triage verdict, includes level= and rule=
+  escalation created         includes the reason string
+  escalation skipped         high item that did NOT meet escalation policy
+  notification dispatched    alert written to outbox as sent
+  notification suppressed    two variants — read the message text; one
+                             cites the urgency threshold, the other the
+                             disabled flag
+  feedback resolved          terminal status applied
+
+grep by feedback_id= to reconstruct one item's full story.
+
+
+Useful queries (sqlite3 instance/feedback.db)
+---------------------------------------------
+Unresolved critical items:
+  SELECT id, customer_name, status FROM feedback
+  WHERE urgency='critical' AND status != 'resolved';
+
+Escalations never successfully notified:
+  SELECT id, feedback_id, reason FROM escalations
+  WHERE notified_at IS NULL;
+
+Suppressed alerts and why:
+  SELECT escalation_id, detail FROM notifications
+  WHERE status='suppressed';
