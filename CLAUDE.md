@@ -126,16 +126,38 @@ Verified corpus: 57 files → 235 chunks (60 function, 58 class, 69 gap,
    escalation-resolve route, `FeedbackWorkflowService` bidirectional
    cascade, `scripts/seed_data.py`.
 
+## How the actual lab notebook ingests (C1_M2_Lab_3)
+
+The lab notebook does NOT use this repo's `ingestion/` pipeline or the
+lucasrct/app web app. Its ingestion is `helper_utils.load_or_create_collection()`
+(a file that lives with the notebook): clone repo → chunk → ChromaDB with
+**sentence-transformers all-MiniLM-L6-v2** embeddings, persist dir
+`lesson_example`. The original version ingested `*.py` only with no
+exclusions; a modified `helper_utils.py` (2026-08) adds `.md` ingestion
+(H1–H3 sections, header as `symbol`, `chunk_type='markdown_section'`) plus
+`ignore_dirs=("ingestion",)` and
+`exclude_files=("SPEC.md", "CLAUDE.md", "docs/investigation_scenarios.md")`.
+Verified against a fresh clone of this repo: **232 chunks from 54 files**
+(69 gap / 60 function / 58 class / 45 markdown_section), zero leaks.
+`notes/*.txt` is NOT ingested by the notebook (py+md only). The notebook's
+five tools (semantic / symbol / regex / sparse / hybrid) consume `path`,
+`start_line`, `symbol` metadata — all present. Notebook swap: cell 4 clone
+URL → this repo (path `feedback_app`), cell 8 collection_name →
+`feedback_app_collection`, repo_path → `./feedback_app`.
+
 ## TODO for the lab
 
-- **Build a read-only DB query tool.** The current lab has no database
-  tool. Single-hop #5 is unanswerable without it; multi-hop 1–4 degrade to
-  weaker paths (reading `scripts/seed_data.py` as fixtures, or the log).
+- **Build a read-only DB query tool.** The lab has no database tool (its
+  five tools are all Chroma-based; no filesystem/log access either).
+  Single-hop #5 is unanswerable without it; multi-hop 1–4 degrade to
+  weaker paths (reading `scripts/seed_data.py` chunks as fixtures).
   Suggested shape: accept a SQL string, execute against
   `sqlite3.connect("file:instance/feedback.db?mode=ro", uri=True)`, return
   rows. (If the lab agent gets a bash tool, the `sqlite3` CLI suffices.)
-- Rebuild the collection with the OpenAI provider before the course; the
-  checked verification build used `--provider default` (no API key here).
+- The repo's own `ingestion/` pipeline (OpenAI-embedding collection at
+  `./chroma_data`) remains for a lucasrct/app-style web-app collection;
+  rebuild with the OpenAI provider if used — the checked verification
+  build used `--provider default` (no API key here).
 
 ## Maintainer conventions
 
