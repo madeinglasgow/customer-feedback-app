@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Submit Feedback{% endblock %}
+{% block content %}
+<h1>Send us your feedback</h1>
+
+<form method="post" action="{{ url_for('public.submit_feedback') }}" class="feedback-form">
+  <div class="field">
+    <label for="customer_name">Name *</label>
+    <input type="text" id="customer_name" name="customer_name"
+           value="{{ form.get('customer_name', '') }}">
+    {% if errors.customer_name %}<p class="error">{{ errors.customer_name }}</p>{% endif %}
+  </div>
+
+  <div class="field">
+    <label for="customer_email">Email *</label>
+    <input type="text" id="customer_email" name="customer_email"
+           value="{{ form.get('customer_email', '') }}">
+    {% if errors.customer_email %}<p class="error">{{ errors.customer_email }}</p>{% endif %}
+  </div>
+
+  <div class="field">
+    <label for="category">Category *</label>
+    <select id="category" name="category">
+      <option value="">-- choose a category --</option>
+      {% for category in categories %}
+        <option value="{{ category.value }}"
+                {% if form.get('category') == category.value %}selected{% endif %}>
+          {{ category.value.replace('_', ' ').title() }}
+        </option>
+      {% endfor %}
+    </select>
+    {% if errors.category %}<p class="error">{{ errors.category }}</p>{% endif %}
+  </div>
+
+  <div class="field">
+    <label for="order_id">Order ID (optional)</label>
+    <input type="text" id="order_id" name="order_id"
+           value="{{ form.get('order_id', '') }}">
+    {% if errors.order_id %}<p class="error">{{ errors.order_id }}</p>{% endif %}
+  </div>
+
+  <div class="field">
+    <label for="message">Message *</label>
+    <textarea id="message" name="message" rows="6">{{ form.get('message', '') }}</textarea>
+    {% if errors.message %}<p class="error">{{ errors.message }}</p>{% endif %}
+  </div>
+
+  <button type="submit">Submit feedback</button>
+</form>
+{% endblock %}

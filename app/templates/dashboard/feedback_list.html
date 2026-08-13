@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<h1>Feedback Dashboard</h1>
+
+<form method="get" action="{{ url_for('dashboard.feedback_list') }}" class="filters">
+  <select name="category">
+    <option value="">All categories</option>
+    {% for category in categories %}
+      <option value="{{ category.value }}"
+              {% if args.get('category') == category.value %}selected{% endif %}>
+        {{ category.value.replace('_', ' ').title() }}
+      </option>
+    {% endfor %}
+  </select>
+
+  <select name="urgency">
+    <option value="">All urgencies</option>
+    {% for urgency in urgencies %}
+      <option value="{{ urgency.value }}"
+              {% if args.get('urgency') == urgency.value %}selected{% endif %}>
+        {{ urgency.value.title() }}
+      </option>
+    {% endfor %}
+  </select>
+
+  <select name="status">
+    <option value="">All statuses</option>
+    {% for status in statuses %}
+      <option value="{{ status.value }}"
+              {% if args.get('status') == status.value %}selected{% endif %}>
+        {{ status.value.title() }}
+      </option>
+    {% endfor %}
+  </select>
+
+  <label>From <input type="date" name="since" value="{{ args.get('since', '') }}"></label>
+  <label>To <input type="date" name="until" value="{{ args.get('until', '') }}"></label>
+
+  <button type="submit">Filter</button>
+  <a href="{{ url_for('dashboard.feedback_list') }}">Clear</a>
+</form>
+
+<table>
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Customer</th>
+      <th>Category</th>
+      <th>Urgency</th>
+      <th>Status</th>
+      <th>Submitted</th>
+      <th>Escalated</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for item in items %}
+    <tr>
+      <td><a href="{{ url_for('dashboard.feedback_detail', feedback_id=item.id) }}">#{{ item.id }}</a></td>
+      <td>{{ item.customer_name }}</td>
+      <td>{{ item.category.value.replace('_', ' ') }}</td>
+      <td><span class="badge urgency-{{ item.urgency.value }}">{{ item.urgency.value }}</span></td>
+      <td>{{ item.status.value }}</td>
+      <td>{{ item.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+      <td>{{ 'yes' if item.escalation else '' }}</td>
+    </tr>
+    {% else %}
+    <tr><td colspan="7">No feedback matches these filters.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

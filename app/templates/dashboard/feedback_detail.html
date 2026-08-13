@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block title %}Feedback #{{ feedback.id }}{% endblock %}
+{% block content %}
+<p><a href="{{ url_for('dashboard.feedback_list') }}">&larr; Back to dashboard</a></p>
+
+<h1>Feedback #{{ feedback.id }}
+  <span class="badge urgency-{{ feedback.urgency.value }}">{{ feedback.urgency.value }}</span>
+</h1>
+
+<section>
+  <h2>Submission</h2>
+  <dl>
+    <dt>Customer</dt><dd>{{ feedback.customer_name }} ({{ feedback.customer_email }})</dd>
+    <dt>Category</dt><dd>{{ feedback.category.value.replace('_', ' ') }}</dd>
+    <dt>Order ID</dt><dd>{{ feedback.order_id or '—' }}</dd>
+    <dt>Submitted</dt><dd>{{ feedback.created_at.strftime('%Y-%m-%d %H:%M') }}</dd>
+    <dt>Status</dt><dd>{{ feedback.status.value }}</dd>
+  </dl>
+  <blockquote>{{ feedback.message }}</blockquote>
+</section>
+
+<section>
+  <h2>Escalation</h2>
+  {% if feedback.escalation %}
+    <dl>
+      <dt>Reason</dt><dd>{{ feedback.escalation.reason }}</dd>
+      <dt>Created</dt><dd>{{ feedback.escalation.created_at.strftime('%Y-%m-%d %H:%M') }}</dd>
+      <dt>Team notified</dt>
+      <dd>{{ feedback.escalation.notified_at.strftime('%Y-%m-%d %H:%M') if feedback.escalation.notified_at else 'never' }}</dd>
+      <dt>Resolved</dt>
+      <dd>{{ 'yes' if feedback.escalation.is_resolved else 'no' }}</dd>
+    </dl>
+    {% if not feedback.escalation.is_resolved %}
+    <form method="post"
+          action="{{ url_for('dashboard.resolve_escalation', escalation_id=feedback.escalation.id) }}">
+      <button type="submit">Resolve escalation</button>
+    </form>
+    {% endif %}
+  {% else %}
+    <p>This feedback was not escalated.</p>
+  {% endif %}
+</section>
+
+<section>
+  <h2>Notifications</h2>
+  {% if notifications %}
+  <table>
+    <thead>
+      <tr><th>ID</th><th>Status</th><th>Recipient</th><th>Detail</th><th>Sent</th></tr>
+    </thead>
+    <tbody>
+      {% for notification in notifications %}
+      <tr>
+        <td>{{ notification.id }}</td>
+        <td>{{ notification.status.value }}</td>
+        <td>{{ notification.recipient or '—' }}</td>
+        <td>{{ notification.detail or '—' }}</td>
+        <td>{{ notification.sent_at.strftime('%Y-%m-%d %H:%M') if notification.sent_at else '—' }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+    <p>No notifications recorded for this feedback.</p>
+  {% endif %}
+</section>
+
+<section>
+  <h2>Update status</h2>
+  <form method="post" action="{{ url_for('dashboard.update_status', feedback_id=feedback.id) }}">
+    <select name="status">
+      {% for status in statuses %}
+        <option value="{{ status.value }}"
+                {% if feedback.status == status %}selected{% endif %}>
+          {{ status.value.title() }}
+        </option>
+      {% endfor %}
+    </select>
+    <button type="submit">Update</button>
+  </form>
+</section>
+{% endblock %}
